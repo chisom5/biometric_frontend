@@ -20,7 +20,7 @@ To run this project, you'll need to have installed:
 
 ## Step 1
 
-Before anything you'll need to have the codebase on your local machine, by clicking on the `<> Code` button to show the available options. 
+Before anything you'll need to have the codebase on your local machine, by clicking on this `<> Code` button on the github page to show the available options. 
 
  * Git clone : using the `git clone` command. or 
  * Download Zip: To donwload it as a zip file, then extract on your local machine.
