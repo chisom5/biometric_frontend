@@ -1,33 +1,27 @@
 import React from "react";
-import { Button, Table } from "antd";
+import { Button, Image, Table } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { TableStyle, TableHeader } from "../../../../../styles/pageStyle";
 import { ButtonOutlined } from "../../../../../components/Button";
 import colors from "../../../../../theme/colors";
 import { withContext } from "../../../../../config/contextConfig";
 import moment from "moment";
-import { Text } from "../../../../../components/Primitives";
 
 const TableComponent = React.memo((props) => {
   const handleDeleteFile = (obj) => {
     props.value.dispatch({
       type: "DELETE_FILE",
-      payload: { showDeleteFile: true, currentFileId: obj.id },
+      payload: { showDeleteFile: true, currentFileData: obj },
     });
   };
 
-  const handlePreviewImage = (obj) => {
-    if (obj.file) {
-      props.value.dispatch({
-        type: "PREVIEW_IMAGE",
-        payload: {
-          previewOpen: true,
-          previewImage: obj.file,
-          previewTitle: obj.name,
-        },
-      });
-    }
+  const handleEditFile = (obj) => {
+    props.value.dispatch({
+      type: "EDIT_FILE",
+      payload: { showEditFile: true, currentFileData: obj },
+    });
   };
+
   const columns = [
     {
       title: "File Name",
@@ -58,13 +52,8 @@ const TableComponent = React.memo((props) => {
       dataIndex: "file",
       render: (link, obj) => {
         return (
-          <Text
-            color="#0074cc"
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => handlePreviewImage(obj)}
-          >
-            Click here
-          </Text>
+          <Image width={50} src={link} />
+        
         );
       },
     },
@@ -80,8 +69,7 @@ const TableComponent = React.memo((props) => {
 
     {
       title:
-      (props.value.activeUser?.isSuperuser ||
-        props.value.activeUser?.isStaff) 
+        props.value.activeUser?.isSuperuser || props.value.activeUser?.isStaff
           ? "Action"
           : "",
       dataIndex: "id",
@@ -90,20 +78,36 @@ const TableComponent = React.memo((props) => {
           <div className="table_action">
             {(props.value.activeUser?.isSuperuser ||
               props.value.activeUser?.isStaff) && (
-                  <ButtonOutlined
-                    width={"auto"}
-                    p={"3px 14px"}
-                    height="auto"
-                    fontWeight={5}
-                    borderColor={colors.danger}
-                    color={colors.danger}
-                    bg={colors.white}
-                    borderRadius={"4px"}
-                    onClick={() => handleDeleteFile(obj)}
-                  >
-                    Delete
-                  </ButtonOutlined>
-                )}
+              <>
+                <ButtonOutlined
+                  width={"auto"}
+                  p={"3px 14px"}
+                  height="auto"
+                  fontWeight={5}
+                  color={colors.white}
+                  bg={colors.primaryblue}
+                  borderRadius={"4px"}
+                  border={"none"}
+                  onClick={() => handleEditFile(obj)}
+                >
+                  Edit
+                </ButtonOutlined>
+
+                <ButtonOutlined
+                  width={"auto"}
+                  p={"3px 14px"}
+                  height="auto"
+                  fontWeight={5}
+                  borderColor={colors.danger}
+                  color={colors.danger}
+                  bg={colors.white}
+                  borderRadius={"4px"}
+                  onClick={() => handleDeleteFile(obj)}
+                >
+                  Delete
+                </ButtonOutlined>
+              </>
+            )}
           </div>
         );
       },

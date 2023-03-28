@@ -16,7 +16,7 @@ const RevokeUsersModal = (props) => {
       if (deleteUser !== null) {
         props.value.dispatch({
           type: "RESET_USER",
-          payload: { showDeleteUser: false, currentUserId: null },
+          payload: { showDeleteUser: false, currentUserObj: null },
         });
       }
     },
@@ -28,12 +28,12 @@ const RevokeUsersModal = (props) => {
   const handleCancel = () => {
     props.value.dispatch({
       type: "RESET_USER",
-      payload: { showDeleteUser: false, currentUserId: null },
+      payload: { showDeleteUser: false, currentUserObj: null },
     });
   };
 
   const handleAccessRevoke = () => {
-    deleteUser({ variables: { id: props.value.state.currentUserId } });
+    deleteUser({ variables: { id: props.value.state.currentUserObj.id } });
   };
 
   if (error) {

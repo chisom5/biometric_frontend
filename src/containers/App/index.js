@@ -15,8 +15,8 @@ class App extends Component {
     return (
       <Router>
         <Routes>
-          {/* <Route index path="/" element={<SignUp />} /> */}
-          <Route path="/" element={<Login />} />
+          <Route index path="/" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
 
           <Route element={<ProtectedRoute />}>
           <Route path="/d" element={<AuthViewWrapper />}>

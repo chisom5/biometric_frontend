@@ -165,6 +165,7 @@ const FormComponent = () => {
                   type="submit"
                   onClick={submitForm}
                   loading={loading}
+                  htmlType='submit'
                 >
                   Login
                 </Button>

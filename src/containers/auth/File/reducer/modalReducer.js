@@ -1,10 +1,8 @@
 export const initialModals = {
   showAddFile: false,
   showDeleteFile: false,
-  currentFileId: null,
-  previewOpen: false,
-  previewImage: "",
-  previewTitle: "",
+  showEditFile: false,
+  currentFileData: null,
 };
 
 export const modalReducer = (state, action) => {
@@ -21,11 +19,12 @@ export const modalReducer = (state, action) => {
         ...action.payload,
       };
 
-    case "PREVIEW_IMAGE":
+      case "EDIT_FILE":
       return {
         ...state,
         ...action.payload,
       };
+
 
     case "RESET_FILE":
       return { ...state, ...action.payload };

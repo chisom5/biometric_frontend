@@ -2,7 +2,8 @@
 export const initialModals = {
     showAddUser: false,
     showDeleteUser: false,
-    currentUserId: null
+    showEditUser: false,
+    currentUserObj: null
 }
 
 export const modalReducer = (state, action) => {
@@ -18,6 +19,13 @@ export const modalReducer = (state, action) => {
                 ...state,
                 ...action.payload
             }
+
+            case "EDIT_USER":
+                return {
+                    ...state,
+                    ...action.payload
+                }
+
         case "RESET_USER":
             return { ...state, ...action.payload }
         default:

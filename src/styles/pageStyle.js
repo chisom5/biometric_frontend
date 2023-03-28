@@ -485,3 +485,9 @@ export const ModalContainer = styled.div`
     margin-bottom: 16px;
   }
 `;
+
+export const UploadFormStyle = styled.form`
+  .ant-upload-list {
+    display: none;
+  }
+`;

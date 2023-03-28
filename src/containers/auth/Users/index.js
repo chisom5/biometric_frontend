@@ -9,6 +9,7 @@ import TableComponent from "./components/table";
 import {
   RevokeUsersModal,
   AddNewUserModal,
+  EditUsersModal,
 } from "./components/modal";
 import { LogoutModal } from "../../../components/Modal";
 import { useNavigate } from "react-router-dom";
@@ -69,6 +70,7 @@ const Users = (props) => {
           <TableComponent />
           <RevokeUsersModal />
           <AddNewUserModal />
+          <EditUsersModal />
           <LogoutModal logout={props.value.logout} />
         </Content>
       </MainContent>

@@ -54,12 +54,7 @@ const AuthViewWrapper = () => {
         description: error.message,
       });
       navigate("/login");
-    } else {
-      notification.open({
-        message: "Error",
-        description: error.message,
-      });
-    }
+    } 
   }
   useEffect(() => {
     if (data) {

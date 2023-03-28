@@ -7,7 +7,7 @@ import {
 } from "../../../styles/pageStyle";
 import TableComponent from "./components/table";
 import { ConfigContext, withContext } from "../../../config/contextConfig";
-import { UploadNewFile, DeleteFile, PreviewImage } from "./components/modal";
+import { UploadNewFile, DeleteFile, EditFileModal } from "./components/modal";
 import { LogoutModal } from "../../../components/Modal";
 import { useNavigate } from "react-router-dom";
 import { initialModals, modalReducer } from "./reducer/modalReducer";
@@ -66,7 +66,7 @@ const FileManagement = (props) => {
           <TableComponent />
           <DeleteFile />
           <UploadNewFile />
-          <PreviewImage />
+          <EditFileModal />
           <LogoutModal logout={props.value.logout} />
         </Content>
       </MainContent>

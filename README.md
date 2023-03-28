@@ -50,6 +50,10 @@ Once you have the project on your machine, you can use `yarn start` or `npm star
  
  - Only  a  staff  user  or  a  superuser  can  delete  users.
 
+ - Only a staff user or super user can edit users.
+
+ - Only a staff user or super user can edit files.
+
  - Pagination features done for both users and files.
 
 

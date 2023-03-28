@@ -16,7 +16,7 @@ const DeleteFile = (props) => {
       if (deleteFile !== null) {
         props.value.dispatch({
           type: "DELETE_FILE",
-          payload: { showDeleteFile: false, currentFileId: null },
+          payload: { showDeleteFile: false, currentFileData: null },
         });
       }
     },
@@ -28,12 +28,12 @@ const DeleteFile = (props) => {
   const handleCancel = () => {
     props.value.dispatch({
       type: "RESET_FILE",
-      payload: { showDeleteFile: false, currentFileId: null },
+      payload: { showDeleteFile: false, currentFileData: null },
     });
   };
 
   const handleAccessRevoke = () => {
-    deleteFile({variables: { id: props.value.state.currentFileId } })
+    deleteFile({variables: { id: props.value.state.currentFileData.id } })
   };
 
   if (error) {

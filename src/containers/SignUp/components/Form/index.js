@@ -77,16 +77,7 @@ const FormComponent = () => {
       canLogin: values.canLogin,
     };
     createUser({ variables: params });
-    resetForm({
-      firstName: "",
-      lastName: "",
-      userName: "",
-      email: "",
-      password: "",
-      canLogin: false,
-      isSuperuser: false,
-      isStaff: false,
-    });
+   
   };
 
   const navigateToLogin = () => {
@@ -307,6 +298,7 @@ const FormComponent = () => {
                   type="submit"
                   onClick={submitForm}
                   loading={loading}
+                  htmlType='submit'
                 >
                   Submit
                 </Button>

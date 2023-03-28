@@ -35,6 +35,7 @@ export const GET_ALL_USERS = gql`
         isSuperuser
         isStaff
         dateJoined
+        canLogin
       }
 
       pageInfo {

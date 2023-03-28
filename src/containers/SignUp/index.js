@@ -1,29 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { LoginContainer, LoginInner, BgInner } from "../../styles/loginStyle";
 import Footer from "../../components/Footer";
 import FormComponent from "./components/Form";
 import { Box, Text } from "../../components/Primitives";
 import colors from "../../theme/colors";
-import { gql, useQuery } from "@apollo/client";
-import client from "../../config/client";
-
-const GET_ALL_USERS = gql`
-  query allUsers {
-    allUsers {
-      items {
-        id
-        firstName
-        lastName
-      }
-    }
-  }
-`;
+import { useMutation } from "@apollo/client";
+import { AUTHENTICATE_USER } from "../apiServices/mutation";
 
 const SignUp = () => {
-  const { data, error, loading } = useQuery(GET_ALL_USERS);
+  const [tokenAuth, { data, loading, error }] = useMutation(AUTHENTICATE_USER, {
+    onCompleted: ({ tokenAuth }) => {
+      if (tokenAuth !== null) {
+        localStorage.setItem("auth-token", JSON.stringify(tokenAuth.token));
+      }
+    },
+  });
 
   console.log({ data, error, loading });
 
+  useEffect(() => {
+    tokenAuth({ variables: { username: "admin_1", password: "Password12*" } });
+  }, []);
 
   return (
     <LoginContainer>
