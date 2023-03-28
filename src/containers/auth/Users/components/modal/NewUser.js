@@ -53,7 +53,7 @@ const AddNewUserModal = (props) => {
     onCompleted: ({ createUser }) => {
       if (createUser !== null) {
         props.value.dispatch({
-          type: "RESET_FILE",
+          type: "RESET_USER",
           payload: { showAddUser: false },
         });
       }
