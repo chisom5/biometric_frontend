@@ -61,11 +61,9 @@ const AuthViewWrapper = () => {
       });
     }
   }
-  console.log(data)
   useEffect(() => {
-    if (data !== undefined) {
+    if (data) {
       const token = JSON.parse(localStorage.getItem("auth-token"));
-      console.log(token)
       const user = jwtDecode(token);
       const userDetail = extractCurrenAuthUser(
         data.allUsers.items,

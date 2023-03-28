@@ -80,24 +80,16 @@ const TableComponent = React.memo((props) => {
 
     {
       title:
-        (props.value.activeUser?.isSuperuser &&
-          props.value.activeUser?.isStaff) ||
-        (props.value.activeUser?.isSuperuser &&
-          !props.value.activeUser?.isStaff) ||
-        (!props.value.activeUser?.isSuperuser &&
-          props.value.activeUser?.isStaff)
+      (props.value.activeUser?.isSuperuser ||
+        props.value.activeUser?.isStaff) 
           ? "Action"
           : "",
       dataIndex: "id",
       render: (id, obj) => {
         return (
           <div className="table_action">
-            {(props.value.activeUser?.isSuperuser &&
-              props.value.activeUser?.isStaff) ||
-              (props.value.activeUser?.isSuperuser &&
-                !props.value.activeUser?.isStaff) ||
-              (!props.value.activeUser?.isSuperuser &&
-                props.value.activeUser?.isStaff && (
+            {(props.value.activeUser?.isSuperuser ||
+              props.value.activeUser?.isStaff) && (
                   <ButtonOutlined
                     width={"auto"}
                     p={"3px 14px"}
@@ -111,7 +103,7 @@ const TableComponent = React.memo((props) => {
                   >
                     Delete
                   </ButtonOutlined>
-                ))}
+                )}
           </div>
         );
       },

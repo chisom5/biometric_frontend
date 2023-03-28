@@ -52,7 +52,8 @@ const LogoutModal = (props) => {
 
   };
   const dismissModal = () => {
-    props.value.logoutDispatch({type: 'DISMISS_LOGOUT', payload: {logoutIcon: false, logout: false }});
+ 
+    props.value.logoutDispatch({type: 'DISMISS_LOGOUT', payload: {logoutIcon: false, logout: false, activeUser: null }});
 
   };
   return (

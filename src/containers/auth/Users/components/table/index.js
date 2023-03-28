@@ -9,7 +9,7 @@ import { Text } from "../../../../../components/Primitives";
 import moment from "moment";
 
 const TableComponent = React.memo((props) => {
-
+  console.log(props.value.activeUser);
   const handleDeleteUser = (obj) => {
     props.value.dispatch({
       type: "DELETE_USER",
@@ -76,12 +76,8 @@ const TableComponent = React.memo((props) => {
     },
     {
       title:
-        (props.value.activeUser?.isSuperuser &&
-          props.value.activeUser?.isStaff) ||
-        (props.value.activeUser?.isSuperuser &&
-          !props.value.activeUser?.isStaff) ||
-        (!props.value.activeUser?.isSuperuser &&
-          props.value.activeUser?.isStaff)
+      (props.value.activeUser?.isSuperuser ||
+        props.value.activeUser?.isStaff) 
           ? "Action"
           : "",
 
@@ -89,26 +85,22 @@ const TableComponent = React.memo((props) => {
       render: (id, obj) => {
         return (
           <div className="table_action">
-            {(props.value.activeUser?.isSuperuser &&
-              props.value.activeUser?.isStaff) ||
-              (props.value.activeUser?.isSuperuser &&
-                !props.value.activeUser?.isStaff) ||
-              (!props.value.activeUser?.isSuperuser &&
-                props.value.activeUser?.isStaff && (
-                  <ButtonOutlined
-                    width={"auto"}
-                    p={"3px 14px"}
-                    height="auto"
-                    fontWeight={5}
-                    borderColor={colors.danger}
-                    color={colors.danger}
-                    bg={colors.white}
-                    borderRadius={"4px"}
-                    onClick={() => handleDeleteUser(obj)}
-                  >
-                    Delete
-                  </ButtonOutlined>
-                ))}
+            {(props.value.activeUser?.isSuperuser ||
+              props.value.activeUser?.isStaff) && (
+              <ButtonOutlined
+                width={"auto"}
+                p={"3px 14px"}
+                height="auto"
+                fontWeight={5}
+                borderColor={colors.danger}
+                color={colors.danger}
+                bg={colors.white}
+                borderRadius={"4px"}
+                onClick={() => handleDeleteUser(obj)}
+              >
+                Delete
+              </ButtonOutlined>
+            )}
           </div>
         );
       },
@@ -123,12 +115,8 @@ const TableComponent = React.memo((props) => {
       <TableHeader bottomPad={true}>
         <div className="tb_header_inner"></div>
         {/*only super user or staff user can add new user.  */}
-        {(props.value.activeUser?.isSuperuser &&
-          props.value.activeUser?.isStaff) ||
-          (props.value.activeUser?.isSuperuser &&
-            !props.value.activeUser?.isStaff) ||
-          (!props.value.activeUser?.isSuperuser &&
-            props.value.activeUser?.isStaff && (
+        {((props.value.activeUser?.isSuperuser ||
+              props.value.activeUser?.isStaff)  && (
               <Button icon={<PlusOutlined />} onClick={() => newuserClicked()}>
                 New User
               </Button>
