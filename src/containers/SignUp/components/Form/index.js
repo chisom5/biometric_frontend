@@ -154,7 +154,7 @@ const FormComponent = () => {
                   lineHeight="25px"
                   color={colors.darkBlue}
                 >
-                  Sign Up
+                  Create an Account
                 </Text>
               </Box>
 
