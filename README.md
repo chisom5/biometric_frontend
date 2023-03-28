@@ -11,7 +11,7 @@ To run this project, you'll need to have installed:
  - npm or yarn
     
 
-### Run the project
+## Run the project
 
 ** **Note**: 
    * Ensure that you have the backend project clone from [this](https://github.com/biometrioearth/file-upload-backend) and the 
@@ -35,7 +35,7 @@ Once you have the project on your machine, you can use `yarn start` or `npm star
    * where 3000 is my react port.
 
 
-#### Features
+## Features
 
  -  Only  registered  users  can  upload  files.
 
@@ -53,7 +53,7 @@ Once you have the project on your machine, you can use `yarn start` or `npm star
  - Pagination features done for both users and files.
 
 
- ##### Technology & Libraries Used
+ ## Technology & Libraries Used
 
  - Reactjs 
 
