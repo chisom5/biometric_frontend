@@ -1,24 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
+import { Button, notification, Alert } from "antd";
 import { Formik, Field, Form } from "formik";
 import { AntInput, AntPassword } from "../../../../components/AntFormik";
-import { Box, Img, Text } from "../../../../components/Primitives";
+import {
+  Box,
+  CheckBox,
+  Img,
+  Label,
+  Text,
+} from "../../../../components/Primitives";
 import * as Yup from "yup";
 import { FormStyle } from "../../../../styles/loginStyle";
 import colors from "../../../../theme/colors";
-import { ButtonOutlined } from "../../../../components/Button";
 import { useNavigate } from "react-router";
-import qs from "qs";
+import { CREATE_USER } from "../../../apiServices/mutation";
+import { useMutation } from "@apollo/client";
 
 const Schema = Yup.object().shape({
-  email: Yup.string()
-    .required("Email is required")
+  userName: Yup.string()
     .matches(
-      /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-      "Invalid email address"
-    ),
+      /^(?=.*[a-z0-9])(?=.*[@/./+/-/_\*])(?=.{1,150})/,
+      "Please enter valid user name"
+    )
+    .required("User Name is required"),
+
+  canLogin: Yup.bool().required("Verify you're not a robot"),
+  isSuperuser: Yup.bool().required("Super user access is required"),
+  isStaff: Yup.bool().required("Admin access is reqiured"),
+
   password: Yup.string()
     .required("Password is required")
-    // zVdG8Pppcek=
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\?=+\`)\:;\(-_\<,\.>'\*])(?=.{8,})/,
       "Please choose a stronger password between 8 and 24. Try a mix of letters, numbers, and special case character"
@@ -27,23 +38,78 @@ const Schema = Yup.object().shape({
 
 const FormComponent = () => {
   const navigate = useNavigate();
-
+  const [visible, setVisible] = useState(true);
   const initial_value = {
+    firstName: "",
+    lastName: "",
+    userName: "",
     email: "",
     password: "",
+    canLogin: false,
+    isSuperuser: false,
+    isStaff: false,
   };
+
+  const [createUser, { error, loading }] = useMutation(CREATE_USER, {
+    onCompleted: ({ createUser }) => {
+      console.log(createUser);
+      if(createUser !== null) navigate("/login");
+    },
+  });
 
   const handleTextChange = (e, setFieldValue) => {
     const { name, value } = e.target;
     setFieldValue(name, value);
   };
 
-  const handleSubmit = (values) => {
-    const params = qs.stringify({
-      username: values.email,
+  const handleCheckboxChange = (e, name, setFieldValue) => {
+    setFieldValue(name, e.target.checked);
+  };
+  const handleSubmit = (values, { resetForm }) => {
+    const params = {
       password: values.password,
-      grant_type: "password",
+      isSuperuser: values.isSuperuser,
+      username: values.userName,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      isStaff: values.isStaff,
+      canLogin: values.canLogin,
+    };
+    createUser({ variables: params });
+    resetForm({
+      firstName: "",
+      lastName: "",
+      userName: "",
+      email: "",
+      password: "",
+      canLogin: false,
+      isSuperuser: false,
+      isStaff: false,
     });
+  };
+
+  const navigateToLogin = () => {
+    navigate("/login");
+  };
+
+  if (error) {
+    if (error.message.includes("expired")) {
+      notification.open({
+        message: "Unauthorized Error",
+        description: error.message,
+      });
+      navigate("/login");
+    } else {
+      notification.open({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  }
+
+  const handleClose = () => {
+    setVisible(false);
   };
 
   return (
@@ -53,73 +119,201 @@ const FormComponent = () => {
         validationSchema={Schema}
         onSubmit={handleSubmit}
       >
-        {({ submitCount, submitForm, setFieldValue }) => (
-          <Form style={{ width: "100%" }}>
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              mb={"20px"}
-            >
-              <Img
-                src={
-                  require("../../../../assets/images/login-profile.svg").default
-                }
-              />
-              <Text
-                fontSize="18px"
-                pt={"24px"}
-                fontWeight={6}
-                lineHeight="25px"
-                color={colors.darkBlue}
+        {({ submitCount, submitForm, setFieldValue, values, errors }) => {
+          return (
+            <Form style={{ width: "100%" }}>
+              {error && visible && (
+                <Box mb={"10px"}>
+                  <Alert
+                    message="Error"
+                    description={error !== undefined && error.message}
+                    type="error"
+                    showIcon
+                    closable
+                    afterClose={handleClose}
+                  />
+                </Box>
+              )}
+
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                mb={"20px"}
               >
-                Login into your account
-              </Text>
-            </Box>
+                <Img
+                  src={
+                    require("../../../../assets/images/login-profile.svg")
+                      .default
+                  }
+                />
+                <Text
+                  fontSize="22px"
+                  pt={"18px"}
+                  fontWeight={6}
+                  lineHeight="25px"
+                  color={colors.darkBlue}
+                >
+                  Sign Up
+                </Text>
+              </Box>
 
-            <Box>
-              <Field
-                width="100%"
-                type="text"
-                style={{ height: "40px", borderRadius: "4px" }}
-                name="email"
-                onChange={(e) => handleTextChange(e, setFieldValue)}
-                component={AntInput}
-                placeholder="Enter email address"
-                submitCount={submitCount}
-              />
-            </Box>
+              <Box display="flex" style={{ gap: "12px" }}>
+                <Box flex={1}>
+                  <Label>First name</Label>
+                  <Field
+                    width="100%"
+                    type="text"
+                    style={{ height: "40px", borderRadius: "4px" }}
+                    name="firstName"
+                    onChange={(e) => handleTextChange(e, setFieldValue)}
+                    component={AntInput}
+                    placeholder="Enter your first name"
+                    submitCount={submitCount}
+                  />
+                </Box>
 
-            <Box>
-              <Field
-                width="100%"
-                type="text"
-                style={{ height: "40px", borderRadius: "4px" }}
-                name="password"
-                onChange={(e) => handleTextChange(e, setFieldValue)}
-                component={AntPassword}
-                placeholder="Enter your password"
-                submitCount={submitCount}
-              />
-            </Box>
+                <Box flex={1}>
+                  <Label>Last name</Label>
+                  <Field
+                    width="100%"
+                    type="text"
+                    style={{ height: "40px", borderRadius: "4px" }}
+                    name="lastName"
+                    onChange={(e) => handleTextChange(e, setFieldValue)}
+                    component={AntInput}
+                    placeholder="Enter your last name"
+                    submitCount={submitCount}
+                  />
+                </Box>
+              </Box>
 
-            <Box display="flex" justifyContent="center" mt={3}>
-              <ButtonOutlined
-                color={colors.danger}
-                border={`1px solid ${colors.danger}`}
-                letterSpacing="0.04em"
-                fontSize="14px"
-                borderRadius="6px"
-                p={"10px 20px"}
-                fontWeight={7}
-                type="submit"
-                onClick={submitForm}
-              >
-                Login
-              </ButtonOutlined>
-            </Box>
-          </Form>
-        )}
+              <Box>
+                <Label>User name</Label>
+                <Field
+                  width="100%"
+                  type="text"
+                  style={{ height: "40px", borderRadius: "4px" }}
+                  name="userName"
+                  onChange={(e) => handleTextChange(e, setFieldValue)}
+                  component={AntInput}
+                  placeholder="Enter your user name"
+                  submitCount={submitCount}
+                />
+              </Box>
+
+              <Box>
+                <Label>Email</Label>
+                <Field
+                  width="100%"
+                  type="text"
+                  style={{ height: "40px", borderRadius: "4px" }}
+                  name="email"
+                  onChange={(e) => handleTextChange(e, setFieldValue)}
+                  component={AntInput}
+                  placeholder="Enter email address"
+                  submitCount={submitCount}
+                />
+              </Box>
+
+              
+
+              <Box>
+                <Label>Password</Label>
+                <Field
+                  width="100%"
+                  type="text"
+                  style={{ height: "40px", borderRadius: "4px" }}
+                  name="password"
+                  onChange={(e) => handleTextChange(e, setFieldValue)}
+                  component={AntPassword}
+                  placeholder="Enter your password"
+                  submitCount={submitCount}
+                />
+              </Box>
+
+                <Box mb={'18px'}>
+                  <Box display="flex" style={{ gap: "10px" }} mb={"1px"}>
+                    <CheckBox
+                      name="isSuperuser"
+                      checked={values.isSuperuser}
+                      onChange={(e) =>
+                        handleCheckboxChange(e, "isSuperuser", setFieldValue)
+                      }
+                    />
+                    <Text>Super User Permission</Text>
+                  </Box>
+                  {errors.isSuperuser && (
+                    <div className="ant-form-item-explain ant-form-item-explain-error">
+                      <div role="alert"> {errors.isSuperuser}</div>
+                    </div>
+                  )}
+                </Box>
+
+                <Box mb={'18px'}>
+                  <Box display="flex" style={{ gap: "10px" }}>
+                    <CheckBox
+                      name="isStaff"
+                      checked={values.isStaff}
+                      onChange={(e) =>
+                        handleCheckboxChange(e, "isStaff", setFieldValue)
+                      }
+                    />
+                    <Text>Staff User Permission </Text>
+
+                  </Box>
+                  {errors.isStaff && (
+                    <div className="ant-form-item-explain ant-form-item-explain-error">
+                      <div role="alert"> {errors.isStaff}</div>
+                    </div>
+                  )}
+                </Box>
+              
+              <Box>
+                <Box mb={"10px"}>
+                  <Box display="flex" style={{ gap: "10px" }} mb={"8px"}>
+                    <CheckBox
+                      name="canLogin"
+                      checked={values.canLogin}
+                      onChange={(e) =>
+                        handleCheckboxChange(e, "canLogin", setFieldValue)
+                      }
+                    />
+                    <Text>Verify that you're not a robot</Text>
+                  </Box>
+                  {errors.canLogin && (
+                    <div className="ant-form-item-explain ant-form-item-explain-error">
+                      <div role="alert"> {errors.canLogin}</div>
+                    </div>
+                  )}
+                </Box>
+
+                <Text
+                  fontSize="11px"
+                  fontWeight={7}
+                  position="relative"
+                  top={"-6px"}
+                  color={colors.lightBlue}
+                  style={{ cursor: "pointer" }}
+                  onClick={navigateToLogin}
+                >
+                  Already have an account?
+                </Text>
+              </Box>
+
+              <Box display="flex" justifyContent="center" mt={3}>
+                <Button
+                  className="btn_submit"
+                  type="submit"
+                  onClick={submitForm}
+                  loading={loading}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </Form>
+          );
+        }}
       </Formik>
     </FormStyle>
   );

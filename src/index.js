@@ -1,23 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-// import { persistor, store } from "./services/store";
-// import { Provider } from "react-redux";
-// import { PersistGate } from "redux-persist/integration/react";
 import App from "./containers/App";
 import reportWebVitals from "./reportWebVitals";
-import DarkModeProvider from "./theme/context";
+import DarkModeProvider from "./theme/themeContext";
+import { ApolloProvider } from "@apollo/client";
+import client from "./config/client";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    {/* <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}> */}
-        <DarkModeProvider>
-          <App />
-        </DarkModeProvider>
-      {/* </PersistGate>
-    </Provider> */}
+    <DarkModeProvider>
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
+    </DarkModeProvider>
   </React.StrictMode>
 );
 

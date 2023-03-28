@@ -6,85 +6,80 @@ const { Option } = Select;
 
 const CreateAntField =
   (AntComponent) =>
-  ({
-    field,
-    form,
-    hasFeedback,
-    label,
-    selectOptions,
-    submitCount,
-    type,
-    hasCustomError,
-    ...props
-  }) => {
-    const touched = form.touched[field.name];
-    const submitted = submitCount > 0;
-    const hasError =
-      field.name === "username" && hasCustomError !== ""
-        ? hasCustomError
-        : field.name === "username" && hasCustomError === ""
-        ? form.errors["username"]
-        : form.errors[field.name];
-    const submittedError = hasError && submitted;
-    const touchedError = hasError && touched;
+    ({
+      field,
+      form,
+      hasFeedback,
+      label,
+      selectOptions,
+      submitCount,
+      type,
+      hasCustomError,
+      ...props
+    }) => {
+      const touched = form.touched[field.name];
+      const submitted = submitCount > 0;
+      const hasError =
+        field.name === "username" && hasCustomError !== ""
+          ? hasCustomError
+          : field.name === "username" && hasCustomError === ""
+            ? form.errors["username"]
+            : form.errors[field.name];
+      const submittedError = hasError && submitted;
+      const touchedError = hasError && touched;
 
-    const onInputChange = (e) => {
-      return form.setFieldValue(field.name, e?.target?.value);
-    };
+      const onInputChange = (e) => {
+        return form.setFieldValue(field.name, e?.target?.value);
+      };
 
-    const onChange = (value) => {
-      return form.setFieldValue(field.name, value);
-    };
+      const onChange = (value) => {
+        return form.setFieldValue(field.name, value);
+      };
 
-    const onBlur = () => form.setFieldTouched(field.name, true);
+      const onBlur = () => form.setFieldTouched(field.name, true);
 
-    return (
-      <div
-        className={[
-          "field-container ",
-          hasCustomError ? "remove-form-item-margin" : null,
-        ].join("")}
-      >
-        <FormItem
-          label={label}
-          hasFeedback={
-            (hasFeedback && submitted) || (hasFeedback && touched)
-              ? true
-              : false
-          }
-          help={submittedError || touchedError ? hasError : false}
-          validateStatus={submittedError || touchedError ? "error" : "success"}
+      return (
+        <div
+          className={[
+            "field-container ",
+            hasCustomError ? "remove-form-item-margin" : null,
+          ].join("")}
         >
-          <AntComponent
-            size="large"
-            {...field}
-            {...props}
-            onBlur={props.onBlur ? props.onBlur : onBlur}
-            onChange={
-              props.onChange ? props.onChange : type ? onInputChange : onChange
+          <FormItem
+            label={label}
+            hasFeedback={
+              (hasFeedback && submitted) || (hasFeedback && touched)
+                ? true
+                : false
             }
+            help={submittedError || touchedError ? hasError : false}
+            validateStatus={submittedError || touchedError ? "error" : "success"}
           >
-            {selectOptions &&
-              selectOptions.map((v, i) => (
-                <Option
-                  key={i}
-                  value={
-                    props.selectType === "ForMdaRespondents"
-                      ? v.Id
-                      : JSON.stringify(v)
-                  }
-                >
-                  {props.selectType === "ForMda" ||
-                  props.selectType === "ForMdaRespondents"
-                    ? `${v.FirstName} ${v.LastName}`
-                    : v.Name}
-                </Option>
-              ))}
-          </AntComponent>
-        </FormItem>
-      </div>
-    );
-  };
+            <AntComponent
+              size="large"
+              {...field}
+              {...props}
+              onBlur={props.onBlur ? props.onBlur : onBlur}
+              onChange={
+                props.onChange ? props.onChange : type ? onInputChange : onChange
+              }
+            >
+              {selectOptions &&
+                selectOptions.map((v, i) => (
+                  <Option
+                    key={i}
+                    value={
+                      v.Name
+                    }
+                  >
+                    {v.Name}
+                  </Option>
+                ))}
+            </AntComponent>
+          </FormItem>
+        </div>
+      );
+    };
 
 CreateAntField.defaultProps = {
   onBlur: null,

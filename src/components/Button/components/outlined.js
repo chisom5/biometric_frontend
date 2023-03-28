@@ -16,7 +16,7 @@ const StyledBtnOutlined = styled("button")`
 
   &:hover {
     background: ${(props) => props.hover};
-    color: ${(props) => props.hover ? colors.modes.light.white: 'inherit' };
+    color: ${(props) => props.hover ? colors.white: 'inherit' };
   }
   ${base}
 `;

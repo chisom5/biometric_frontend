@@ -1,14 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import SVG from "react-inlinesvg";
 import colors from "../../../theme/colors";
-import { Text, Box } from "../../Primitives";
-import { useNavigate } from "react-router-dom";
-
-import { Avatar } from "@material-ui/core";
-// import { useSelector } from "react-redux";
-// import { Dropdown } from "antd";
-// import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import { Text, Box, Img } from "../../Primitives";
+import { withContext } from "../../../config/contextConfig";
+import { Avatar } from "antd";
+import {UserOutlined} from '@ant-design/icons';
 
 const HeaderStyle = styled.header`
   width: 100%;
@@ -23,7 +19,7 @@ const HeaderStyle = styled.header`
   z-index: 1000;
 
   .logo {
-    max-width: 250px;
+    max-width: 50px;
   }
 
   .headerItem-right {
@@ -35,9 +31,11 @@ const HeaderStyle = styled.header`
       width: 32px;
       height: 32px;
       background: #00b8f5;
-      border-radius: 50px;
       color: ${colors.white};
       font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .user-details {
       margin: 0px 6px 0px 6px;
@@ -63,30 +61,12 @@ const HeaderStyle = styled.header`
   }
 `;
 
-const HeaderComponent = () => {
-  const navigate = useNavigate();
-
-  // const { authUser } = useSelector((state) => state.global);
-
-  const handleLogout = () => {
-    sessionStorage.clear();
-    // dispatch(logoutAuthUsers(null));
-    navigate("/");
-  };
-
-  const handleView = () => {};
-
-  const items = [
-    {
-      label: <p onClick={handleView}>View Profile</p>,
-      key: "0",
-    },
-  ];
+const HeaderComponent = (props) => {
 
   return (
     <HeaderStyle>
-      <SVG
-        src={require("../../../assets/images/dashboard-logo.svg").default}
+      <Img
+        src={require("../../../assets/images/dashboard-logo.jpeg")}
         className="logo"
       />
 
@@ -101,17 +81,28 @@ const HeaderComponent = () => {
 
       <Box display="flex" alignItems="center">
         <div className="headerItem-right">
-          <Avatar className="user-avatar">AM</Avatar>
+          <Avatar shape="square" className="user-avatar" icon={<UserOutlined />} />
 
           <div className="user-details">
-            {/* <p>{`${authUser.first_name} ${authUser.last_name}`}</p> */}
-            <p>Chisom Okoye</p>
-            <span id="role">Admin</span>
-            {/* <span id="role">{authUser.role}</span> */}
+            <p>{`${props.value.activeUser?.firstName} ${props.value.activeUser?.lastName}`}</p>
+            <span id="role">
+              {(props.value.activeUser?.isSuperuser &&
+                props.value.activeUser?.isStaff) ||
+              (props.value.activeUser?.isSuperuser &&
+                !props.value.activeUser?.isStaff)
+                ? "Super User"
+                : !props.value.activeUser?.isSuperuser &&
+                  props.value.activeUser?.isStaff
+                ? "Staff User"
+                : !props.value.activeUser?.isSuperuser &&
+                  !props.value.activeUser?.isStaff
+                ? "User"
+                : ""}
+            </span>
           </div>
         </div>
       </Box>
     </HeaderStyle>
   );
 };
-export default HeaderComponent;
+export default withContext(HeaderComponent);

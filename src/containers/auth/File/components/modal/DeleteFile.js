@@ -2,38 +2,38 @@ import React from "react";
 import { Modal, Button, notification } from "antd";
 import { ModalContainer } from "../../../../../styles/pageStyle";
 import SVG from "react-inlinesvg";
-import { withContext } from "../../../../../config/contextConfig";
 import { useNavigate } from "react-router-dom";
+import { withContext } from "../../../../../config/contextConfig";
 import { useMutation } from "@apollo/client";
-import { DELETE_USER } from "../../../../apiServices/mutation";
-import { GET_ALL_USERS } from "../../../../apiServices/query";
+import { DELETE_FILE } from "../../../../apiServices/mutation";
+import { GET_ALL_FILES } from "../../../../apiServices/query";
 
-const RevokeUsersModal = (props) => {
+const DeleteFile = (props) => {
   const navigate = useNavigate();
 
-  const [deleteUser, {loading, error }] = useMutation(DELETE_USER, {
-    onCompleted: ({ deleteUser }) => {
-      if (deleteUser !== null) {
+  const [deleteFile, { loading, error }] = useMutation(DELETE_FILE, {
+    onCompleted: ({ deleteFile }) => {
+      if (deleteFile !== null) {
         props.value.dispatch({
-          type: "RESET_USER",
-          payload: { showDeleteUser: false, currentUserId: null },
+          type: "DELETE_FILE",
+          payload: { showDeleteFile: false, currentFileId: null },
         });
       }
     },
     refetchQueries: [
-      { query: GET_ALL_USERS, variables: { page: 1, pageSize: 10 } },
+      { query: GET_ALL_FILES, variables: { page: 1, pageSize: 10 } },
     ],
   });
 
   const handleCancel = () => {
     props.value.dispatch({
-      type: "RESET_USER",
-      payload: { showDeleteUser: false, currentUserId: null },
+      type: "RESET_FILE",
+      payload: { showDeleteFile: false, currentFileId: null },
     });
   };
 
   const handleAccessRevoke = () => {
-    deleteUser({ variables: { id: props.value.state.currentUserId } });
+    deleteFile({variables: { id: props.value.state.currentFileId } })
   };
 
   if (error) {
@@ -50,18 +50,17 @@ const RevokeUsersModal = (props) => {
       });
     }
   }
-
   return (
     <Modal
       title={null}
-      open={props.value.state.showDeleteUser}
+      open={props.value.state.showDeleteFile}
       footer={null}
       closable={false}
       width={480}
     >
       <ModalContainer>
         <header>
-          <span className="modal-title">Delete User</span>
+          <span className="modal-title">Delete File </span>
           {/* icon delete */}
           <span onClick={handleCancel} className="close-modal-icon">
             <SVG
@@ -73,7 +72,7 @@ const RevokeUsersModal = (props) => {
         </header>
         <section className="modal-mainContent">
           <div>
-            <p>Are you sure you want to delete this user?</p>
+            <p>Are you sure you want to delete this file?</p>
           </div>
           <div className="buttonContainer">
             <Button
@@ -90,7 +89,7 @@ const RevokeUsersModal = (props) => {
               className="confirmButton"
               loading={loading}
             >
-              Yes, delete
+              Yes, Delete
             </Button>
           </div>
         </section>
@@ -99,4 +98,4 @@ const RevokeUsersModal = (props) => {
   );
 };
 
-export default withContext(RevokeUsersModal);
+export default withContext(DeleteFile);

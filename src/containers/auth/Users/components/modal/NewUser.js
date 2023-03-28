@@ -1,42 +1,83 @@
 import React, { useRef } from "react";
-import { Modal, Button } from "antd";
+import { Modal, Button, notification } from "antd";
 import { ModalContainer } from "../../../../../styles/pageStyle";
-// import { useDispatch, useSelector } from "react-redux";
 import SVG from "react-inlinesvg";
-// import { openAddModal } from "../../../../../services/users/action";
 import { Formik, Field, Form } from "formik";
-import { AntInput, AntSelect } from "../../../../../components/AntFormik";
-import { Box, Label, Text } from "../../../../../components/Primitives";
+import { AntInput, AntPassword } from "../../../../../components/AntFormik";
+import {
+  Box,
+  Label,
+  Text,
+  CheckBox,
+} from "../../../../../components/Primitives";
 import * as Yup from "yup";
-import colors from "../../../../../theme/colors";
-// import { handleAddNewuser } from "../../../../../services/users/action";
 import { useNavigate } from "react-router-dom";
+import { withContext } from "../../../../../config/contextConfig";
+import { CREATE_USER } from "../../../../apiServices/mutation";
+import { GET_ALL_USERS } from "../../../../apiServices/query";
+import { useMutation } from "@apollo/client";
 
-const Schema = Yup.object().shape({});
 
-const AddNewUserModal = () => {
+const Schema = Yup.object().shape({
+  userName: Yup.string()
+    .matches(
+      /^(?=.*[a-z0-9])(?=.*[@/./+/-/_\*])(?=.{1,150})/,
+      "Please enter valid user name"
+    )
+    .required("User Name is required"),
+
+  password: Yup.string()
+    .required("Password is required")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\?=+\`)\:;\(-_\<,\.>'\*])(?=.{8,})/,
+      "Please choose a stronger password between 8 and 24. Try a mix of letters, numbers, and special case character"
+    ),
+});
+
+const AddNewUserModal = (props) => {
   const formikFormRef = useRef();
+
   const initial_value = {
-    email: "",
     firstName: "",
     lastName: "",
-    role: "",
+    userName: "",
+    email: "",
+    password: "",
+    canLogin: false,
+    isSuperuser: false,
+    isStaff: false,
   };
 
-  // const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  // const { showAddUser, isCreating } = useSelector((state) => state.user);
-  // const { userRolesList } = useSelector((state) => state.global);
+  const [createUser, { error, loading }] = useMutation(CREATE_USER, {
+    onCompleted: ({ createUser }) => {
+      if (createUser !== null) {
+        props.value.dispatch({
+          type: "RESET_FILE",
+          payload: { showAddUser: false },
+        });
+      }
+    },
+    refetchQueries: [
+      { query: GET_ALL_USERS, variables: { page: 1, pageSize: 10 } },
+    ],
+  });
 
   const handleCancel = () => {
-    // dispatch(openAddModal({ showAddUser: false }));
+    props.value.dispatch({
+      type: "RESET_USER",
+      payload: { showAddUser: false },
+    });
 
     formikFormRef.current.resetForm({
-      email: "",
       firstName: "",
       lastName: "",
-      role: "",
+      userName: "",
+      email: "",
+      password: "",
+      canLogin: false,
+      isSuperuser: false,
+      isStaff: false,
     });
   };
 
@@ -45,31 +86,53 @@ const AddNewUserModal = () => {
     setFieldValue(name, value);
   };
 
-  const handleSelectChange = (e, setFieldValue) => {
-    const { Name } = JSON.parse(e);
-    setFieldValue("role", Name);
+  const handleCheckboxChange = (e, name, setFieldValue) => {
+    setFieldValue(name, e.target.checked);
   };
 
   const handleSubmit = (values, { resetForm }) => {
     const params = {
-      FirstName: values.firstName,
-      LastName: values.lastName,
-      RoleName: values.role,
-      Email: values.email,
+      password: values.password,
+      isSuperuser: values.isSuperuser,
+      username: values.userName,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      isStaff: values.isStaff,
+      canLogin: values.canLogin,
     };
-    console.log(params)
-    // dispatch(handleAddNewuser(params, navigate));
+    createUser({ variables: params });
     resetForm({
-      email: "",
       firstName: "",
       lastName: "",
-      role: "",
+      userName: "",
+      email: "",
+      password: "",
+      canLogin: false,
+      isSuperuser: false,
+      isStaff: false,
     });
   };
+
+  if (error) {
+    if (error.message.includes("expired")) {
+      notification.open({
+        message: "Unauthorized Error",
+        description: error.message,
+      });
+      navigate("/login");
+    } else {
+      notification.open({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  }
+
   return (
     <Modal
       title={null}
-      open={false}
+      open={props.value.state.showAddUser}
       footer={null}
       closable={false}
       width={480}
@@ -78,13 +141,6 @@ const AddNewUserModal = () => {
         <header>
           <Box>
             <p className="modal-title">Create New User</p>
-            <Text
-              color={colors.danger}
-              fontSize="10px"
-              fontWeight={4}
-            >
-              * N/B: All fields are required
-            </Text>
           </Box>
           {/* icon delete */}
           <span onClick={handleCancel} className="close-modal-icon">
@@ -103,73 +159,142 @@ const AddNewUserModal = () => {
               onSubmit={handleSubmit}
               innerRef={formikFormRef}
             >
-              {({ submitCount, setFieldValue, submitForm }) => (
+              {({ submitCount, setFieldValue, submitForm, errors, values }) => (
                 <Form style={{ width: "100%" }}>
-                  <Box>
-                    <Label>First Name</Label>
-                    <Field
-                      type="text"
-                      name="firstName"
-                      width="100%"
-                      placeholder="Enter first name"
-                      style={{ height: "36px", borderRadius: "4px" }}
-                      component={AntInput}
-                      onChange={(e) => handleTextChange(e, setFieldValue)}
-                      submitCount={submitCount}
-                      hasFeedback
-                    />
+                  <Box display="flex" style={{ gap: "12px" }}>
+                    <Box flex={1}>
+                      <Label>First Name</Label>
+                      <Field
+                        width="100%"
+                        type="text"
+                        style={{ height: "40px", borderRadius: "4px" }}
+                        name="firstName"
+                        onChange={(e) => handleTextChange(e, setFieldValue)}
+                        component={AntInput}
+                        placeholder="Enter your first name"
+                        submitCount={submitCount}
+                      />
+                    </Box>
+
+                    <Box flex={1}>
+                      <Label>Last Name</Label>
+                      <Field
+                        width="100%"
+                        type="text"
+                        style={{ height: "40px", borderRadius: "4px" }}
+                        name="lastName"
+                        onChange={(e) => handleTextChange(e, setFieldValue)}
+                        component={AntInput}
+                        placeholder="Enter your last name"
+                        submitCount={submitCount}
+                      />
+                    </Box>
                   </Box>
 
                   <Box>
-                    <Label>Last Name</Label>
+                    <Label>User Name</Label>
                     <Field
-                      type="text"
-                      name="lastName"
                       width="100%"
-                      placeholder="Enter last name"
-                      style={{ height: "36px", borderRadius: "4px" }}
-                      component={AntInput}
+                      type="text"
+                      style={{ height: "40px", borderRadius: "4px" }}
+                      name="userName"
                       onChange={(e) => handleTextChange(e, setFieldValue)}
+                      component={AntInput}
+                      placeholder="Enter your user name"
                       submitCount={submitCount}
-                      hasFeedback
                     />
                   </Box>
 
                   <Box>
                     <Label>Email</Label>
                     <Field
-                      type="text"
-                      name="email"
                       width="100%"
-                      placeholder="Enter email address"
-                      style={{ height: "36px", borderRadius: "4px" }}
-                      component={AntInput}
+                      type="text"
+                      style={{ height: "40px", borderRadius: "4px" }}
+                      name="email"
                       onChange={(e) => handleTextChange(e, setFieldValue)}
+                      component={AntInput}
+                      placeholder="Enter email address"
                       submitCount={submitCount}
-                      hasFeedback
                     />
                   </Box>
 
                   <Box>
-                    <Label>Role</Label>
+                    <Label>Password</Label>
                     <Field
-                      name="role"
                       width="100%"
-                      style={{ height: "36px", borderRadius: "4px" }}
-                      component={AntSelect}
-                      placeholder="Select Role"
-                      selectOptions={[]}
-                      onChange={(e) => handleSelectChange(e, setFieldValue)}
+                      type="text"
+                      style={{ height: "40px", borderRadius: "4px" }}
+                      name="password"
+                      onChange={(e) => handleTextChange(e, setFieldValue)}
+                      component={AntPassword}
+                      placeholder="Enter your password"
                       submitCount={submitCount}
-                      hasFeedback
-                      showSearch
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
                     />
+                  </Box>
+
+                    <Box flex={1} mb={'18px'}>
+                      <Box display="flex" style={{ gap: "10px" }} mb={"1px"}>
+                      
+                        <CheckBox
+                          name="isSuperuser"
+                          checked={values.isSuperuser}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e,
+                              "isSuperuser",
+                              setFieldValue
+                            )
+                          }
+                        />
+                          <Text>Super User Permission</Text>
+                      </Box>
+                      {errors.isSuperuser && (
+                        <div className="ant-form-item-explain ant-form-item-explain-error">
+                          <div role="alert"> {errors.isSuperuser}</div>
+                        </div>
+                      )}
+                    </Box>
+
+                    <Box flex={1} mb={'18px'}>
+                      <Box display="flex" style={{ gap: "10px" }}>
+                       
+                        <CheckBox
+                          name="isStaff"
+                          checked={values.isStaff}
+                          onChange={(e) =>
+                            handleCheckboxChange(e, "isStaff", setFieldValue)
+                          }
+                        />
+                         <Text>Staff User Permission </Text>
+                      </Box>
+                      {errors.isStaff && (
+                        <div className="ant-form-item-explain ant-form-item-explain-error">
+                          <div role="alert"> {errors.isStaff}</div>
+                        </div>
+                      )}
+                    </Box>
+                
+
+                 
+
+                  <Box mb={"10px"}>
+                    <Box display="flex" style={{ gap: "10px" }} mb={"8px"}>
+
+                      <CheckBox
+                        name="canLogin"
+                        checked={values.canLogin}
+                        onChange={(e) =>
+                          handleCheckboxChange(e, "canLogin", setFieldValue)
+                        }
+                      />
+                                            <Text>Verify that you're not a robot</Text>
+                    </Box>
+                    {errors.canLogin && (
+                      <div className="ant-form-item-explain ant-form-item-explain-error">
+                        <div role="alert"> {errors.canLogin}</div>
+                      </div>
+                    )}
                   </Box>
 
                   <div className="buttonContainer">
@@ -177,7 +302,7 @@ const AddNewUserModal = () => {
                       key="confirm"
                       className="confirmButton"
                       type="submit"
-                      // loading={isCreating}
+                      loading={loading}
                       onClick={submitForm}
                     >
                       Create User
@@ -193,4 +318,4 @@ const AddNewUserModal = () => {
   );
 };
 
-export default AddNewUserModal;
+export default withContext(AddNewUserModal);

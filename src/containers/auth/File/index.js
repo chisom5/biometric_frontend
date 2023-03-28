@@ -1,95 +1,78 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
+import { notification } from "antd";
 import {
   Content,
   MainContent,
   MiniHeaderStyle,
 } from "../../../styles/pageStyle";
 import TableComponent from "./components/table";
-import {
-  // RevokeUsersModal,
-  // EditUserModal,
-  AddNewUserModal,
-} from "./components/modal";
-// import { useDispatch, useSelector } from "react-redux";
+import { ConfigContext, withContext } from "../../../config/contextConfig";
+import { UploadNewFile, DeleteFile, PreviewImage } from "./components/modal";
 import { LogoutModal } from "../../../components/Modal";
 import { useNavigate } from "react-router-dom";
-// import { ErrorComponent } from "../../../components/ErrorBoundry/errorComponent";
-// import {
-//   fetchAllUsersPaginated,
-//   clearSuccessMessage,
-//   clearErrorMessage,
-// } from "../../../services/users/action";
-// import {
-//   clearGlobalSuccessMessage,
-//   clearGlobalErrorMessage,
-// } from "../../../services/global/action";
+import { initialModals, modalReducer } from "./reducer/modalReducer";
+import { useLazyQuery } from "@apollo/client";
+import { GET_ALL_FILES } from "../../apiServices/query";
 
-const FileManagement = () => {
-  // const dispatch = useDispatch();
+const FileManagement = (props) => {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  // const { currentUserObj, error, success } = useSelector((state) => state.user);
-  // const { globalError, globalSuccess } = useSelector((state) => state.global);
 
-  // useEffect(() => {
-  //   if (error !== null || success !== null) {
-  //     setTimeout(() => dispatch(clearSuccessMessage()), 5000);
-  //     setTimeout(() => dispatch(clearErrorMessage()), 5000);
-  //   }
-  //   if (globalError !== null || globalSuccess !== null) {
-  //     setTimeout(() => dispatch(clearGlobalSuccessMessage()), 5000);
-  //     setTimeout(() => dispatch(clearGlobalErrorMessage()), 5000);
-  //   }
-  // }, [dispatch, success, error, globalError, globalSuccess]);
+  const [state, dispatch] = useReducer(modalReducer, initialModals);
+  const [allFiles ,{data, loading, error }] = useLazyQuery(GET_ALL_FILES);
 
-  useEffect(() => {
-    // dispatch(
-    //   fetchAllUsersPaginated(
-    //     { CurrentPage: currentPage, PageSize: 10 },
-    //     navigate
-    //   )
-    // );
-  }, []);
+  useEffect(()=> {
+    allFiles({variables: {page: 1, pageSize: 10}})
+  }, [])
 
-  const handlePagination = () => {};
+  const handlePagination = (pagination, filters, sorter) => {
+    allFiles({variables: {page: pagination.current, pageSize: 2}})
 
-  // const handleClearErrorMessage = () => {
-  //   if (error !== null) {
-  //     dispatch(clearErrorMessage());
-  //   } else if (globalError !== null) {
-  //     dispatch(clearGlobalErrorMessage());
-  //   }
-  // };
-  // const handleClearSuccessMessage = () => {
-  //   if (success !== null) {
-  //     dispatch(clearSuccessMessage());
-  //   } else if (globalSuccess !== null) {
-  //     dispatch(clearGlobalSuccessMessage());
-  //   }
-  // };
+  };
 
+  
+
+  if (error) {
+    if (error.message.includes("expired")) {
+      notification.open({
+        message: "Unauthorized Error",
+        description: error.message,
+      });
+      navigate("/login");
+    } else {
+      notification.open({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  }
   return (
-    // <ErrorComponent
-    //   error={error || globalError}
-    //   success={success || globalSuccess}
-    //   clearErrorMessage={handleClearErrorMessage}
-    //   clearSuccessMessage={handleClearSuccessMessage}
-    // >
+    <ConfigContext.Provider
+      value={{
+        handlePagination,
+        dispatch,
+        state,
+        logoutDispatch: props.value.dispatch,
+        tableData: data,
+        loading,
+        activeUser: props.value.activeUser
+      }}
+    >
       <MainContent>
         <MiniHeaderStyle>
           <p className="title">File Upload</p>
         </MiniHeaderStyle>
 
         <Content>
-          <TableComponent currentPage={currentPage} />
-          {/* <RevokeUsersModal /> */}
-          {/* <EditUserModal userObj={currentUserObj} /> */}
-          <AddNewUserModal />
-          {/* <LogoutModal /> */}
+          <TableComponent />
+          <DeleteFile />
+          <UploadNewFile />
+          <PreviewImage />
+          <LogoutModal logout={props.value.logout} />
         </Content>
       </MainContent>
-    // </ErrorComponent>
+      {/* </ErrorComponent> */}
+    </ConfigContext.Provider>
   );
 };
 
-export default FileManagement;
+export default withContext(FileManagement);

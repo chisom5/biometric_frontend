@@ -20,95 +20,17 @@ body {
   background: #fcfcfc;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
+
 p {
   margin: 0px;
 }
-.pointer {
-  cursor: pointer;
-}
-.sub_status {
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  padding: 3px 8px 3px 6px;
-  gap: 6px;
-  font-weight: 600;
-  font-size: 12px;
-  width: fit-content;
-}
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50px;
-}
-.active_dot {
-  background: #269924;
-}
-.inactive_dot {
-  background: #ed2124;
-}
 
-.awaiting_status {
-  color: #d5b029;
-  background: #f8f2dd;
+.ant-form-item-explain-error{
+  color: #ff4d4f !important;
 }
-.closed_status {
-  color: #666666;
-  background: #e5e5e5;
-}
-.ongoing_status {
-  color: #7213ea;
-  background: #e8d9fc;
-}
-.awaiting_dot {
-  background: #d5b029;
-}
-.ongoing_dot {
-  background: #7213ea;
-}
-.closed_dot {
-  background: #666666;
-}
-
-.active_sub {
-  color: #269924;
-  background: #def0de;
-}
-.inactive_sub {
-  color: #ed2124;
-  background: #fcdede;
-}
-.buttonCancel {
-  background: #e5e5e5;
-  border-radius: 6px;
-  color: #666666;
-}
-.buttonCancel:hover,
-.buttonCancel:active {
-  background: #e5e5e5;
-  color: #666666;
-  border-color: #fd349c;
-}
-.confirmButton {
-  background-color: #1e49e2;
-  color: white;
-  height: 30px;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.04em;
-  padding: 7px 14px;
-  border-radius: 6px;
-}
-.confirmButton:hover,
-.confirmButton:active {
-  background: #1e49e2;
-  color: #fff;
-  border-color: none;
+.ant-upload.ant-upload-drag p.ant-upload-drag-icon .anticon {
+  font-size: 58px;
+  color: #0C233C;
 }
 
 .login_bg {

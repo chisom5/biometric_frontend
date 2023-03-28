@@ -1,4 +1,4 @@
 import './modalStyle.css';
-export {default as RevokeUsersModal} from './RemoveUser';
-export {default as EditUserModal} from './EditUser';
-export {default as AddNewUserModal} from './NewUser';
+export {default as DeleteFile} from './DeleteFile';
+export {default as UploadNewFile} from './UploadNewFile';
+export {default as PreviewImage} from './PreviewImage';

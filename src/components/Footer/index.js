@@ -4,6 +4,7 @@ import colors from "../../theme/colors";
 import { Box, Text } from "../Primitives";
 
 const FooterStyle = styled(Box)`
+width: 100%;
   position: absolute;
   bottom: 5px;
   display: flex;

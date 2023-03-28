@@ -3,8 +3,7 @@ import styled from "styled-components";
 import { Button, Modal } from "antd";
 import SVG from "react-inlinesvg";
 import { useNavigate } from "react-router-dom";
-// import { useDispatch, useSelector } from "react-redux";
-// import { dismissLogoutModal } from "../../../services/global/action";
+import { withContext } from "../../../config/contextConfig";
 
 const LogoutContent = styled.div`
   display: grid;
@@ -44,34 +43,21 @@ const LogoutContent = styled.div`
   }
 `;
 
-const LogoutModal = () => {
+const LogoutModal = (props) => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const { logout } = useSelector((state) => state.global);
-
-  // const initialState = {
-  //   isAuthenticating: false,
-  //   loggingOut: false,
-  //   successModal: false,
-  //   isFetching: false,
-  //   logout: false,
-  //   logoutIcon: false,
-  //   globalError: null,
-  //   globalSuccess: null,
-  //   authUser: null,
-  // };
+  
   const handleLogout = () => { 
-    sessionStorage.clear();
-    // dispatch(dismissLogoutModal(initialState));
+    localStorage.clear();
     navigate("/");
 
   };
   const dismissModal = () => {
-    // dispatch(dismissLogoutModal(initialState));
+    props.value.logoutDispatch({type: 'DISMISS_LOGOUT', payload: {logoutIcon: false, logout: false }});
+
   };
   return (
     <Modal
-      open={false}
+      open={props.logout}
       closable={false}
       bodyStyle={{ padding: "20px 30px 45px" }}
       footer={null}
@@ -101,4 +87,4 @@ const LogoutModal = () => {
   );
 };
 
-export default LogoutModal;
+export default withContext(LogoutModal);

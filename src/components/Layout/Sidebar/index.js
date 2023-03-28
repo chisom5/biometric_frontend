@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { StyledSidebar } from "../layout";
 import { Img, Box, Text } from "../../Primitives";
-// import { openLogoutModal } from "../../../services/global/action";
-// import { useDispatch, useSelector } from "react-redux";
+import { withContext } from "../../../config/contextConfig";
+
 
 const Sidebar = (props) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  // const { logoutIcon } = useSelector((state) => state.global);
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
 
   const { pathname } = useLocation();
 
@@ -41,11 +39,9 @@ const Sidebar = (props) => {
   };
 
   const handleLogout = () => {
-    // dispatch(openLogoutModal({ logoutIcon: true, logout: true }));
+    props.value.dispatch({type: 'OPEN_LOGOUT', payload: {logoutIcon: true, logout: true }});
   };
 
-  // 09042442948
-  // 08147504272
 
   return (
     <StyledSidebar>
@@ -86,14 +82,12 @@ const Sidebar = (props) => {
           >
             <Img
               src={
-                // logoutIcon
-                //   ? require("../../../assets/images/nav/logout-active.svg")
-                //       .default
-                //   : require("../../../assets/images/nav/logout-default.svg")
-                //       .default
-
-                      require("../../../assets/images/nav/logout-default.svg")
+                props.value.logoutIcon
+                  ? require("../../../assets/images/nav/logout-active.svg")
                       .default
+                  : require("../../../assets/images/nav/logout-default.svg")
+                      .default
+
               }
             />
 
@@ -115,4 +109,4 @@ const Sidebar = (props) => {
   );
 };
 
-export default Sidebar;
+export default withContext(Sidebar);

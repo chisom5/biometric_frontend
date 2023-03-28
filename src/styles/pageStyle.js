@@ -284,67 +284,43 @@ export const TableStyle = styled.div`
           gap: 6px;
         }
 
-        .tag_Completed {
-          color: ${colors.GreenColor};
-          background: ${colors.lightGreen};
+        .tag_success {
+          background: #def0de;
           border-radius: 10px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          width: fit-content;
+          padding: 2px 8px 2px 8px;
+          gap: 6px;
+          color: #269924;
+          font-weight: 600;
+          border: none;
+        }
+        .tag_warning {
+          background: #fde8d5;
+          border-radius: 10px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          width: fit-content;
+          padding: 2px 8px 2px 8px;
+          gap: 6px;
+          color: #f68d2e;
+          font-weight: 600;
+          border: none;
         }
 
-        .tag_closed {
-          color: ${colors.mainBlue};
-          background: ${colors.lightBlue};
-          border-radius: 10px;
-        }
-
-        .tag_NotStart {
-          color: ${colors.gray};
-          background: ${colors.gray5};
-          border-radius: 10px;
-        }
-
-        .tag_Ongoing {
-          color: ${colors.yellowColor};
-          background: ${colors.lightYellowColor};
-          border-radius: 10px;
-        }
-
-        .tag_Under {
-          color: ${colors.purpleColor};
-          background: ${colors.lightPurple};
-          border-radius: 10px;
-        }
-
-        .Completed_icon {
+        .icon {
           width: 10px;
           height: 10px;
           border-radius: 50%;
-          background: ${colors.GreenColor};
         }
-
-        .closed_icon {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: ${colors.mainBlue};
+        .iconSuccessColor {
+          background: #269924;
         }
-
-        .NotStart_icon {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: ${colors.gray};
-        }
-        .Ongoing_icon {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: ${colors.yellowColor};
-        }
-        .Under_icon {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: ${colors.purpleColor};
+        .iconWarningColor {
+          background: #f68d2e;
         }
       }
 
@@ -457,9 +433,9 @@ export const ModalContainer = styled.div`
     .modal-title {
       font-style: normal;
       font-weight: 500;
-      font-family: Sofia Pro;
       font-size: 26px;
       line-height: 33px;
+      letter-spacing: -0.01em;
     }
 
     .close-modal-icon {
@@ -489,7 +465,14 @@ export const ModalContainer = styled.div`
     gap: 10px;
     margin-top: 26px;
   }
-
+  .confirmButton {
+    background: ${colors.lightBlue};
+    border-radius: 3px;
+    border: none;
+    color: ${colors.white};
+    display: flex;
+    align-items: center;
+  }
   .ant-input,
   .ant-select-selection-item {
     font-weight: 400;
