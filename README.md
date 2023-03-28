@@ -18,14 +18,14 @@ To run this project, you'll need to have installed:
    * Docker setup is complete and running. inorder to generate the graphql endpoint (http://localhost:<TEST_APP_PORT>/graphql/)
     
 
-## Step 1
+### Step 1
 
 Before anything you'll need to have the codebase on your local machine, by clicking on this `<> Code` button on the github page to show the available options. 
 
  * Git clone : using the `git clone` command. or 
  * Download Zip: To donwload it as a zip file, then extract on your local machine.
 
-## Step 2
+### Step 2
 
 Once you have the project on your machine, you can use `yarn start` or `npm start` command. to Launch it, and it can be access via:
 
